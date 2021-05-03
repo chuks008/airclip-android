@@ -4,18 +4,31 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ygorxkharo.airclipboard.home.data.clipboard.ClipBoardRepository
-import com.ygorxkharo.airclipboard.home.data.socket.ClipboardConnectionProvider
+import com.ygorxkharo.airclipboard.home.data.connection.ClipboardConnectionProvider
 
-class ClipboardViewModelImpl(
+/**
+ * Default implementation of state management for the clipboard screen
+ *
+ * @property clipBoardSocketProvider Provides a connection to a clipboard
+ * @property clipBoardRepository Provides a means to send/receive messages to the clip board
+ */
+class DefaultClipboardViewModel(
     private val clipBoardSocketProvider: ClipboardConnectionProvider,
     private val clipBoardRepository: ClipBoardRepository
 ): ViewModel(), ClipBoardViewModel {
 
+    /**
+     * @property _eventListener Sends UI events based on messages received from the clip board
+     */
     private var _eventListener = MutableLiveData<ClipboardState>()
+
+    /**
+     * @property eventListener LiveData<ClipboardState>
+     */
     override val eventListener: LiveData<ClipboardState> = _eventListener
 
     override fun startClipboardDiscovery() {
-        clipBoardSocketProvider.getClipboardSocket { socketInstance ->
+        clipBoardSocketProvider.getClipboardConnection { socketInstance ->
             socketInstance?.let {
                 _eventListener.postValue(ClipboardDiscoverState(true))
                 clipBoardRepository.clipBoardApiInstance = it
@@ -24,7 +37,7 @@ class ClipboardViewModelImpl(
     }
 
     override fun connectToClipBoard() {
-        clipBoardSocketProvider.startSocket()
+        clipBoardSocketProvider.startConnection()
         clipBoardRepository.connectToServer()
         clipBoardRepository.messageObserver.subscribe { socketPayload ->
             if(!socketPayload.status) {
@@ -45,6 +58,6 @@ class ClipboardViewModelImpl(
 
     override fun disconnectFromClipboard() {
         clipBoardRepository.disconnectFromServer()
-        clipBoardSocketProvider.killSocket()
+        clipBoardSocketProvider.destroyConnection()
     }
 }

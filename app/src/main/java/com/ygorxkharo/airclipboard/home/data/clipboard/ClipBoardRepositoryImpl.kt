@@ -13,7 +13,7 @@ class ClipBoardRepositoryImpl(
     override val messageObserver: Subject<ClipboardMessagePayload>
 ): ClipBoardRepository {
 
-    override lateinit var clipBoardApiInstance: ClipboardApi
+    override lateinit var clipBoardApiInstance: ClipboardConnection
 
     /**
      * @property disposables used to dispose of any observables when they are no longer needed

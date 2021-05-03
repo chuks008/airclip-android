@@ -2,10 +2,10 @@ package com.ygorxkharo.airclipboard.home.di
 
 import com.ygorxkharo.airclipboard.home.data.clipboard.ClipBoardRepository
 import com.ygorxkharo.airclipboard.home.data.clipboard.ClipBoardRepositoryImpl
-import com.ygorxkharo.airclipboard.home.data.socket.ClipboardConnectionProvider
+import com.ygorxkharo.airclipboard.home.data.connection.ClipboardConnectionProvider
 import com.ygorxkharo.airclipboard.home.domain.ClipboardMessagePayload
 import com.ygorxkharo.airclipboard.home.presentation.viewmodel.ClipBoardViewModel
-import com.ygorxkharo.airclipboard.home.presentation.viewmodel.ClipboardViewModelImpl
+import com.ygorxkharo.airclipboard.home.presentation.viewmodel.DefaultClipboardViewModel
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import org.kodein.di.DI
@@ -36,7 +36,7 @@ class ClipboardModule: KodeinModule{
         bind<ClipBoardViewModel>() with provider {
             val clipBoardSocketProvider: ClipboardConnectionProvider = instance()
             val clipboardRepository: ClipBoardRepository = instance()
-            ClipboardViewModelImpl(clipBoardSocketProvider, clipboardRepository)
+            DefaultClipboardViewModel(clipBoardSocketProvider, clipboardRepository)
         }
     }
 }

@@ -1,10 +1,10 @@
 package com.ygorxkharo.airclipboard.home.di
 
 import com.tinder.scarlet.lifecycle.LifecycleRegistry
-import com.ygorxkharo.airclipboard.home.data.socket.ClipboardConnectionProvider
-import com.ygorxkharo.airclipboard.home.data.socket.DefaultSocketManager
-import com.ygorxkharo.airclipboard.home.data.socket.SocketManager
-import com.ygorxkharo.airclipboard.home.data.socket.WebSocketProviderImpl
+import com.ygorxkharo.airclipboard.home.data.connection.ClipboardConnectionProvider
+import com.ygorxkharo.airclipboard.home.data.connection.websocket.WebSocketClipboardConnectionManager
+import com.ygorxkharo.airclipboard.home.data.connection.ClipboardConnectionManager
+import com.ygorxkharo.airclipboard.home.data.connection.websocket.WebSocketClipboardProviderImpl
 import okhttp3.OkHttpClient
 import org.kodein.di.DI
 import org.kodein.di.bind
@@ -36,14 +36,14 @@ class NetworkingModule: KodeinModule{
                 .writeTimeout(TIMEOUT_LIMIT_SECS, TimeUnit.SECONDS)
                 .build()
         }
-        bind<SocketManager>() with provider {
+        bind<ClipboardConnectionManager<LifecycleRegistry>>() with provider {
             val okHttpClient: OkHttpClient = instance()
-            DefaultSocketManager(lifecycleRegistry, okHttpClient)
+            WebSocketClipboardConnectionManager(lifecycleRegistry, okHttpClient)
         }
 
         bind<ClipboardConnectionProvider>() with provider {
-            val socketManager: SocketManager = instance()
-            WebSocketProviderImpl(socketManager)
+            val socketManager: ClipboardConnectionManager<LifecycleRegistry> = instance()
+            WebSocketClipboardProviderImpl(socketManager)
         }
     }
 }

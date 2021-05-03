@@ -1,7 +1,10 @@
-package com.ygorxkharo.airclipboard.home.data.socket
+package com.ygorxkharo.airclipboard.home.data.connection.websocket
 
+import com.tinder.scarlet.lifecycle.LifecycleRegistry
 import com.ygorxkharo.airclipboard.BuildConfig
-import com.ygorxkharo.airclipboard.home.data.clipboard.ClipboardApi
+import com.ygorxkharo.airclipboard.home.data.clipboard.ClipboardConnection
+import com.ygorxkharo.airclipboard.home.data.connection.ClipboardConnectionManager
+import com.ygorxkharo.airclipboard.home.data.connection.ClipboardConnectionProvider
 import com.ygorxkharo.airclipboard.home.data.threading.CoroutineContextProviderImpl
 import com.ygorxkharo.airclipboard.home.data.networking.NetworkScanner
 import com.ygorxkharo.airclipboard.home.data.networking.ThreadingManager
@@ -9,11 +12,14 @@ import com.ygorxkharo.airclipboard.home.data.networking.ThreadingManager
 /**
  * Default implementation for the Websocket provider
  */
-class WebSocketProviderImpl(private val socketManager: SocketManager): ClipboardConnectionProvider {
+class WebSocketClipboardProviderImpl(
+    private val socketManager: ClipboardConnectionManager<LifecycleRegistry>
+): ClipboardConnectionProvider {
+
     private val AIR_CLIP_PORT = BuildConfig.AIRCLIP_PORT
     private val socketUrlTemplate = "ws://%s"
 
-    override fun getClipboardSocket(onDiscovered: (ClipboardApi?) -> Unit) {
+    override fun getClipboardConnection(onDiscovered: (ClipboardConnection?) -> Unit) {
         val localConnectionAddress = NetworkScanner.getIpv4HostAddress()
         localConnectionAddress?.let { ipv4String ->
             ThreadingManager.ioToMain(
@@ -22,7 +28,7 @@ class WebSocketProviderImpl(private val socketManager: SocketManager): Clipboard
                 },
                 workOnMain = { serverUrl ->
                     serverUrl?.let { ipAddress ->
-                        val socketInstance = socketManager.buildSocketInstance(
+                        val socketInstance = socketManager.buildConnectionInstance(
                             String.format(socketUrlTemplate, ipAddress)
                         )
                         onDiscovered(socketInstance)
@@ -33,11 +39,11 @@ class WebSocketProviderImpl(private val socketManager: SocketManager): Clipboard
         } ?: onDiscovered(null)
     }
 
-    override fun startSocket() {
+    override fun startConnection() {
         socketManager.startConnection()
     }
 
-    override fun killSocket() {
+    override fun destroyConnection() {
         socketManager.killConnection()
     }
 }

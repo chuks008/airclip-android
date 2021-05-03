@@ -16,7 +16,7 @@ interface ClipBoardRepository {
      */
     val messageObserver: Subject<ClipboardMessagePayload>
 
-    var clipBoardApiInstance: ClipboardApi
+    var clipBoardApiInstance: ClipboardConnection
     fun connectToServer()
     fun sendTextToClipboard(text: String)
     fun disconnectFromServer()
