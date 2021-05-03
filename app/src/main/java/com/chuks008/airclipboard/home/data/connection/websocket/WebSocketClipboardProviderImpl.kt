@@ -7,7 +7,7 @@ import com.chuks008.airclipboard.home.data.connection.ClipboardConnectionManager
 import com.chuks008.airclipboard.home.data.connection.ClipboardConnectionProvider
 import com.chuks008.airclipboard.home.data.threading.CoroutineContextProviderImpl
 import com.chuks008.airclipboard.home.data.networking.NetworkScanner
-import com.chuks008.airclipboard.home.data.networking.ThreadingManager
+import com.chuks008.airclipboard.home.data.threading.ThreadingManager
 
 /**
  * Default implementation for the Websocket provider
