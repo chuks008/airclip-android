@@ -9,7 +9,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "com.ygorxkharo.airclipboard"
+        applicationId "com.chuks008.airclipboard"
         minSdkVersion 22
         targetSdkVersion 29
         versionCode 1
