@@ -1,8 +1,13 @@
 package com.chuks008.airclipboard.home.data.networking
 
+import android.content.Context
+import android.net.wifi.WifiManager
+import android.text.format.Formatter
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.Inet4Address
+import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.NetworkInterface
 import java.net.Socket
@@ -14,8 +19,25 @@ import java.net.SocketAddress
  */
 object NetworkScanner {
 
+    private val NETWORK_SCANNER_TAG = this@NetworkScanner::class.simpleName.toString()
     private val inetRange = 0..255
     const val DEFAULT_SCAN_TIMEOUT_IN_MILLIS = 15
+
+    fun getHotspotIPAddress(mContext: Context): String {
+        val wifiManager = mContext.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val ipAddress: String = Formatter.formatIpAddress(wifiManager.dhcpInfo.gateway)
+        Log.i(NETWORK_SCANNER_TAG, "IP address found: $ipAddress")
+
+        var serverIP: InetAddress? = null
+        try {
+            serverIP = InetAddress.getByName(ipAddress)
+            Log.e(NETWORK_SCANNER_TAG, "" + serverIP.toString())
+        } catch (e: java.lang.Exception) {
+            Log.e(NETWORK_SCANNER_TAG,  e.toString())
+        }
+
+        return serverIP.toString()
+    }
 
     /**
      * Find the host IP connection a user is connected to when using a WIFI connection
@@ -40,7 +62,9 @@ object NetworkScanner {
      * @return a confirmation that the IP address and port are indeed on the user's network and is
      * reachable
      */
-    suspend fun confirmSocketWithListeningPort(defaultGatewayIp: String, port: Int) = withContext(Dispatchers.IO) {
+    suspend fun confirmSocketWithListeningPort(defaultGatewayIp: String, port: Int) = withContext(
+        Dispatchers.IO
+    ) {
         var foundIp = ""
         val ipPrefix = IpAddressMapper.generateIPPrefix(defaultGatewayIp)
         for(suffix in inetRange) {

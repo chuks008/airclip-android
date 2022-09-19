@@ -9,7 +9,7 @@ import org.kodein.di.DI
 open class MainApplication: Application(), DIAware {
     override val di: DI by DI.lazy {
         importAll(
-            NetworkingModule().initialize(),
+            NetworkingModule(applicationContext).initialize(),
             ClipboardModule().initialize()
         )
     }

@@ -5,20 +5,15 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.button.MaterialButton
 import com.chuks008.airclipboard.R
 import com.chuks008.airclipboard.home.MainApplication
+import com.chuks008.airclipboard.home.presentation.viewmodel.*
+import com.google.android.material.button.MaterialButton
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.instance
-import com.chuks008.airclipboard.home.presentation.viewmodel.ClipBoardViewModel
-import com.chuks008.airclipboard.home.presentation.viewmodel.ClipboardState
-import com.chuks008.airclipboard.home.presentation.viewmodel.ClipboardConnectSuccess
-import com.chuks008.airclipboard.home.presentation.viewmodel.ClipboardTextSent
-import com.chuks008.airclipboard.home.presentation.viewmodel.ClipboardConnectClosed
-import com.chuks008.airclipboard.home.presentation.viewmodel.ClipboardDiscoverState
-import com.chuks008.airclipboard.home.presentation.viewmodel.ClipboardConnectError
 
 class AirClipBoardActivity: AppCompatActivity(), DIAware {
 
@@ -126,5 +121,16 @@ class AirClipBoardActivity: AppCompatActivity(), DIAware {
         disconnectBtn.visibility = View.GONE
         rescanBtn.visibility = View.GONE
         statusText.text = "Found 1 clipboard"
+    }
+
+    fun checkPermissions(onPermissionGranted: () -> Unit, onPermissionDenied: () -> Unit) {
+        val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                onPermissionGranted.invoke()
+            } else {
+                onPermissionDenied.invoke()
+            }
+        }
+        requestPermissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
     }
 }

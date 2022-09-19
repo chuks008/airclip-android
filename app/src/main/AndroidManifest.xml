@@ -16,7 +16,8 @@
         android:name="com.chuks008.airclipboard.home.MainApplication"
         android:theme="@style/Theme.AirClipBoard">
 
-        <activity android:name="com.chuks008.airclipboard.home.presentation.view.AirClipBoardActivity">
+        <activity android:name="com.chuks008.airclipboard.home.presentation.view.AirClipBoardActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -1,10 +1,11 @@
 package com.chuks008.airclipboard.home.di
 
-import com.tinder.scarlet.lifecycle.LifecycleRegistry
+import android.content.Context
+import com.chuks008.airclipboard.home.data.connection.ClipboardConnectionManager
 import com.chuks008.airclipboard.home.data.connection.ClipboardConnectionProvider
 import com.chuks008.airclipboard.home.data.connection.websocket.WebSocketClipboardConnectionManager
-import com.chuks008.airclipboard.home.data.connection.ClipboardConnectionManager
 import com.chuks008.airclipboard.home.data.connection.websocket.WebSocketClipboardProviderImpl
+import com.tinder.scarlet.lifecycle.LifecycleRegistry
 import okhttp3.OkHttpClient
 import org.kodein.di.DI
 import org.kodein.di.bind
@@ -16,7 +17,9 @@ import java.util.concurrent.TimeUnit
  * Dependency container for loading networking dependencies
  *
  */
-class NetworkingModule: KodeinModule{
+class NetworkingModule(
+    private val appContext: Context
+): KodeinModule{
 
     override val TAG = "network_module"
     private val TIMEOUT_LIMIT_SECS = 10L
@@ -43,7 +46,7 @@ class NetworkingModule: KodeinModule{
 
         bind<ClipboardConnectionProvider>() with provider {
             val socketManager: ClipboardConnectionManager<LifecycleRegistry> = instance()
-            WebSocketClipboardProviderImpl(socketManager)
+            WebSocketClipboardProviderImpl(socketManager, appContext)
         }
     }
 }
